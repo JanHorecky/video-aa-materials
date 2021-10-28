@@ -1,10 +1,13 @@
 package com.raywenderlich.android.menagerie.ui.login
 
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.BounceInterpolator
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updateLayoutParams
@@ -47,13 +50,18 @@ class LoginActivity : AppCompatActivity(), LoginView {
     val buttonWidth = binding.loginButton.width
     val buttonHeight = binding.loginButton.height
 
-    val alphaAnimator = ValueAnimator.ofFloat(0f, 1f)
-    alphaAnimator.duration = 1000
+    val progressBarAlphaAnimation =
+      ObjectAnimator.ofFloat(binding.progressBar,"alpha",0f, 1f)
+    progressBarAlphaAnimation.duration = 2000
+    progressBarAlphaAnimation.interpolator = BounceInterpolator()
 
-    alphaAnimator.addUpdateListener {
+    val loginButtonAnimator = ValueAnimator.ofFloat(0f, 1f)
+    loginButtonAnimator.duration = 2000
+    loginButtonAnimator.interpolator = BounceInterpolator()
+
+    loginButtonAnimator.addUpdateListener {
       val animationValue = it.animatedValue as Float
 
-      binding.progressBar.alpha = animationValue
       binding.loginButton.alpha = 1 - animationValue * 1.5f
 
       binding.loginButton.updateLayoutParams {
@@ -63,7 +71,8 @@ class LoginActivity : AppCompatActivity(), LoginView {
       }
     }
 
-    alphaAnimator.start()
+    loginButtonAnimator.start()
+    progressBarAlphaAnimation.start()
   }
 
   override fun onLoggedIn() { // todo button animation, transition, progress
