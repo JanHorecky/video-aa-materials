@@ -32,7 +32,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:padding="@dimen/defaultMargin"
+        android:padding="@dimen/smallPadding"
+        android:minWidth="@dimen/minActionHeight"
+        android:minHeight="@dimen/minActionWidth"
+        android:transitionName="@string/transitionPetSleep"
         android:src="@drawable/ic_sunny_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
