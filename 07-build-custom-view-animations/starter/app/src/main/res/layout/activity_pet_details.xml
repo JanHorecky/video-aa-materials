@@ -50,6 +50,7 @@
 
       <ImageView
         android:id="@+id/petImage"
+        android:transitionName="@string/transitionPetAvatar"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/petDetailsPetImageHeight"
         android:layout_marginTop="@dimen/bigMargin"
