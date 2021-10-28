@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.raywenderlich.android.menagerie.R
 import com.raywenderlich.android.menagerie.databinding.ActivitySettingsBinding
 import com.raywenderlich.android.menagerie.ui.login.LoginActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,8 +49,8 @@ class SettingsActivity : AppCompatActivity(), SettingsView {
   }
 
   override fun onUserLoggedOut() {
-    // TODO transition
     startActivity(LoginActivity.getIntent(this))
+    overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
   }
 
   override fun onBackPressed() = exitCircular()
