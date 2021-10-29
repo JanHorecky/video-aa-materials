@@ -35,10 +35,19 @@ class PetAdapter(
   }
 
   fun onItemSwiped(position:Int){
-
+    items.removeAt(position)
+    notifyItemRemoved(position)
   }
 
-  fun onItemMoved(oldPosition:Int, newPosition:Int){
+  fun getItem(position: Int) = items[position]
 
+  fun onItemMoved(oldPosition:Int, newPosition:Int){
+    val itemToReplace = items[oldPosition]
+    items.remove(itemToReplace)
+
+    val positionToMove = if (oldPosition > newPosition) newPosition else newPosition - 1
+    items.add(positionToMove, itemToReplace)
+
+    notifyItemMoved(oldPosition, positionToMove)
   }
 }
