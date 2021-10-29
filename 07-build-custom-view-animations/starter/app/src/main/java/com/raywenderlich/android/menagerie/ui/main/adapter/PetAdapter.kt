@@ -33,4 +33,12 @@ class PetAdapter(
   override fun onBindViewHolder(holder: PetViewHolder, position: Int) {
     holder.bindData(items[position], onItemClick, onPetSleepClick)
   }
+
+  fun onItemSwiped(position:Int){
+
+  }
+
+  fun onItemMoved(oldPosition:Int, newPosition:Int){
+
+  }
 }
