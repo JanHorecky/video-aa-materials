@@ -2,6 +2,8 @@ package com.raywenderlich.android.menagerie.ui.main
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Animatable2
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.raywenderlich.android.menagerie.databinding.ActivityMainBinding
