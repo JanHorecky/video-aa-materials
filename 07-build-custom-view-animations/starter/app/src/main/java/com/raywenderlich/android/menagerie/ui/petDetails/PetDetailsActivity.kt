@@ -68,8 +68,20 @@ class PetDetailsActivity : AppCompatActivity(), PetDetailsView {
 
         binding.petSleepToolbar.alpha = percentScrolled
         binding.petSleep.alpha = percentScrolled
+
+        if (vertivalOffset == 0) {
+          binding.feedPetButton.show()
+        } else {
+          binding.feedPetButton.hide()
+        }
       }
     )
+  }
+
+  override fun onBackPressed() {
+    binding.petSleep.alpha = 1f
+    binding.petSleepToolbar.alpha = 0f
+    supportFinishAfterTransition()
   }
 
   override fun showFeedingSleepingPetMessage() {
