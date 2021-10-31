@@ -7,11 +7,13 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.google.android.material.appbar.AppBarLayout
 import com.raywenderlich.android.menagerie.R
 import com.raywenderlich.android.menagerie.data.model.Pet
 import com.raywenderlich.android.menagerie.databinding.ActivityPetDetailsBinding
 import com.raywenderlich.android.menagerie.ui.feedPet.FeedPetActivity
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.Math.abs
 
 @AndroidEntryPoint
 class PetDetailsActivity : AppCompatActivity(), PetDetailsView {
@@ -59,6 +61,15 @@ class PetDetailsActivity : AppCompatActivity(), PetDetailsView {
         viewModel.onPetFeedTap(pet)
       }
     })
+    binding.appBarLayout.addOnOffsetChangedListener(
+      AppBarLayout.OnOffsetChangedListener { appBarLayout, vertivalOffset ->
+        val scrollRange = appBarLayout.totalScrollRange
+        val percentScrolled = abs(vertivalOffset / scrollRange.toFloat())
+
+        binding.petSleepToolbar.alpha = percentScrolled
+        binding.petSleep.alpha = percentScrolled
+      }
+    )
   }
 
   override fun showFeedingSleepingPetMessage() {
