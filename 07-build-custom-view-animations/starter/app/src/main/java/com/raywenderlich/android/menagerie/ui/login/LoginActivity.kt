@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.raywenderlich.android.menagerie.R
@@ -36,16 +37,18 @@ class LoginActivity : AppCompatActivity(), LoginView {
     binding.loginButton.onClick {
       loginViewModel.logIn()
 
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        binding.loginButton.transformToProgress()
-      }
+      binding.loginButton.visibility = View.GONE
+      binding.lottieLoading.visibility = View.VISIBLE
+
+//      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//        binding.loginButton.transformToProgress()
+//      }
     }
   }
 
   override fun onLoggedIn() { // todo button animation, transition, progress
-   binding.loginButton.reverseAnimation {
-     showPets()
-   }
+    // binding.loginButton.reverseAnimation { showPets() }
+    showPets()
   }
 
   override fun showPets() {
