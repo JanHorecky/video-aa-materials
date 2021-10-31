@@ -1,8 +1,10 @@
 package com.raywenderlich.android.menagerie.ui.feedPet
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.GestureDetector
@@ -10,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnLayout
 import androidx.dynamicanimation.animation.DynamicAnimation
@@ -43,8 +46,15 @@ class FeedPetActivity : AppCompatActivity() {
     FlingAnimation(binding.cookie, DynamicAnimation.Y).setFriction(1f)
   }
 
-  private val cookieGestureListener = object : GestureDetector.SimpleOnGestureListener() {
+  private val chocolateCookieFlingAnimationX by lazy {
+    FlingAnimation(binding.chocolateCookie, DynamicAnimation.X).setFriction(1f)
+  }
 
+  private val chocolateCookieFlingAnimationY by lazy {
+    FlingAnimation(binding.chocolateCookie, DynamicAnimation.Y).setFriction(1f)
+  }
+
+  private val cookieGestureListener = object : GestureDetector.SimpleOnGestureListener() {
     override fun onDown(e: MotionEvent?): Boolean = true
 
     override fun onFling(
@@ -65,37 +75,46 @@ class FeedPetActivity : AppCompatActivity() {
     }
   }
 
+  private val chocolateCookieGestureListener = object : GestureDetector.SimpleOnGestureListener() {
+    override fun onDown(e: MotionEvent?): Boolean = true
+
+    override fun onFling(
+      e1: MotionEvent?,
+      e2: MotionEvent?,
+      velocityX: Float,
+      velocityY: Float
+    ): Boolean {
+      if (binding.chocolateCookie.visibility == View.VISIBLE) {
+        chocolateCookieFlingAnimationX.setStartVelocity(velocityX)
+        chocolateCookieFlingAnimationY.setStartVelocity(velocityY)
+
+        chocolateCookieFlingAnimationX.start()
+        chocolateCookieFlingAnimationY.start()
+      }
+
+      return true
+    }
+  }
+
   private val cookieGestureDetector by lazy {
     GestureDetector(this, cookieGestureListener)
+  }
+
+  private val chocolateCookieGestureDetector by lazy {
+    GestureDetector(this, chocolateCookieGestureListener)
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(binding.root)
     setupUi()
-    setupFlingBoxes()
-    setupFlingEndListener()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      setupFlingBoxes()
+    }
+    setupFlingEndListeners()
   }
 
-  private fun setupUi() {
-    val data = intent.getSerializableExtra(KEY_PET) as? Pet ?: return
-
-    feedPetViewModel.setPet(data)
-    feedPetViewModel.petData.observe(this, { petData ->
-
-      if (petData != null) {
-        binding.feedPetToolbar.title = getString(R.string.feedPetTitle, petData.name)
-        binding.petImage.load(petData.image)
-      }
-    })
-
-   binding.cookie.setOnTouchListener { _, event ->
-     cookieGestureDetector.onTouchEvent(event)
-
-     true
-   }
-  }
-
+  @RequiresApi(Build.VERSION_CODES.R)
   private fun setupFlingBoxes() {
     binding.cookie.doOnLayout {
       val displayMetrics = DisplayMetrics()
@@ -107,20 +126,45 @@ class FeedPetActivity : AppCompatActivity() {
       cookieFlingAnimationX.setMinValue(0f).setMaxValue((width - it.width).toFloat())
       cookieFlingAnimationY.setMinValue(0f).setMaxValue(height - it.height * 2f)
     }
+
+    binding.chocolateCookie.doOnLayout {
+      val displayMetrics = DisplayMetrics()
+      display?.getRealMetrics(displayMetrics)
+
+      val width = displayMetrics.widthPixels
+      val height = displayMetrics.heightPixels
+
+      chocolateCookieFlingAnimationX.setMinValue(0f).setMaxValue((width - it.width).toFloat())
+      chocolateCookieFlingAnimationY.setMinValue(0f).setMaxValue(height - it.height * 2f)
+    }
   }
 
-  private fun setupFlingEndListener() {
+  private fun setupFlingEndListeners() {
     cookieFlingAnimationX.addEndListener { _, _, _, _ ->
       if (isPetTouchingCookie(binding.cookie, binding.petImage)) {
         binding.cookie.visibility = View.GONE
-        Toast.makeText(this, "Omnomnonmonmnonm", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Omnomnomnom", Toast.LENGTH_SHORT).show()
       }
     }
 
     cookieFlingAnimationY.addEndListener { _, _, _, _ ->
       if (isPetTouchingCookie(binding.cookie, binding.petImage)) {
         binding.cookie.visibility = View.GONE
-        Toast.makeText(this, "Omnomnonmonmnonm", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Omnomnomnom", Toast.LENGTH_SHORT).show()
+      }
+    }
+
+    chocolateCookieFlingAnimationX.addEndListener { _, _, _, _ ->
+      if (isPetTouchingCookie(binding.chocolateCookie, binding.petImage)) {
+        binding.chocolateCookie.visibility = View.GONE
+        Toast.makeText(this, "Omnomnomnom", Toast.LENGTH_SHORT).show()
+      }
+    }
+
+    chocolateCookieFlingAnimationY.addEndListener { _, _, _, _ ->
+      if (isPetTouchingCookie(binding.chocolateCookie, binding.petImage)) {
+        binding.chocolateCookie.visibility = View.GONE
+        Toast.makeText(this, "Omnomnomnom", Toast.LENGTH_SHORT).show()
       }
     }
   }
@@ -133,5 +177,31 @@ class FeedPetActivity : AppCompatActivity() {
     pet.getHitRect(petRect)
 
     return Rect.intersects(cookieRect, petRect)
+  }
+
+  @SuppressLint("ClickableViewAccessibility")
+  private fun setupUi() {
+    val data = intent.getSerializableExtra(KEY_PET) as? Pet ?: return
+
+    feedPetViewModel.setPet(data)
+    feedPetViewModel.petData.observe(this, { petData ->
+
+      if (petData != null) {
+        binding.feedPetToolbar.title = getString(R.string.feedPetTitle, petData.name)
+        binding.petImage.load(petData.image)
+      }
+    })
+
+    binding.cookie.setOnTouchListener { _, event ->
+      cookieGestureDetector.onTouchEvent(event)
+
+      true
+    }
+
+    binding.chocolateCookie.setOnTouchListener { _, event ->
+      chocolateCookieGestureDetector.onTouchEvent(event)
+
+      true
+    }
   }
 }
