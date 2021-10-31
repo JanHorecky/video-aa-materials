@@ -14,7 +14,7 @@ class SettingsViewModel @ViewModelInject constructor(
 
   private lateinit var view: SettingsView
 
-  val sleepingPets by lazy { repository.getSleepingPets() }
+  val pets by lazy { repository.getPets() }
 
   fun setView(view: SettingsView) {
     this.view = view
@@ -25,19 +25,14 @@ class SettingsViewModel @ViewModelInject constructor(
     view.onUserLoggedOut()
   }
 
-  fun wakeUpAllPets() {
+
+  fun onPetSleepUp() {
     viewModelScope.launch {
       val pets = repository.getPetData()
+      val arePetsAsleep = pets.all { it.isSleeping }
+      val updatedPets = pets.map { it.copy(isSleeping = !arePetsAsleep) }
 
-      repository.updatePets(pets.map { pet -> pet.copy(isSleeping = false) })
-    }
-  }
-
-  fun putAllPetsToBed() {
-    viewModelScope.launch {
-      val pets = repository.getPetData()
-
-      repository.updatePets(pets.map { pet -> pet.copy(isSleeping = true) })
+      repository.updatePets(updatedPets)
     }
   }
 }
